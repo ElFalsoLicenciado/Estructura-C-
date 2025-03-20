@@ -1,0 +1,122 @@
+#include <iostream>
+
+using namespace std;
+
+/*
+		cima
+	|---|---|--*|	|   |   |
+	^	  ^
+	|	  |
+	|	  |
+	pila	puntero
+	vacia	de pila
+
+	Principio LIFO: First In Last Out
+
+	Cada vez que se realize una accion el puntero va cambiando de posicion.
+*/
+
+const int MAX = 5;
+
+struct Pila
+{
+	int valores[MAX];
+	int posicion;
+};
+
+Pila pila;
+
+//Inicializar
+void iniciar()
+{
+	pila.posicion = -1;
+}
+
+bool vacia()
+{
+	return pila.posicion == -1; //Funciona como un if
+}
+
+bool llena()
+{
+	return pila.posicion == MAX-1; //Funciona como un if
+}
+
+void push(int x)
+{
+	if(llena()) 
+	{
+		cout << "\nLa pila esta llena.";
+		return;
+	}
+	pila.posicion += 1;
+	pila.valores[pila.posicion] = x;
+	return;
+}
+
+void pop()
+{
+	if(vacia())
+	{
+		cout << "\nLa pila esta vacia.";
+		return;
+	}
+	cout << "\nSe quito  a:" << pila.valores[pila.posicion];
+	pila.posicion -= 1;
+	return;
+}
+
+void show()
+{	
+	if(!vacia())
+	{
+		cout << "\nElementos de la pila:";
+		for(int i = 0; i < pila.posicion+1; ++i)
+			cout << " " << pila.valores[pila.posicion];
+		return;
+	}
+	cout << "No hay elementos en tu pila";
+	return;
+
+}
+
+
+int main()
+{
+	int op; bool f = false;
+	iniciar();
+
+	do
+	{
+		cout << "\n1. Push\n2. Pop\n3. Mostrar\n0. Salir\n-->";
+		cin >> op;
+		switch(op)
+		{
+			case 1:
+				{
+					cout << "\nDame un numero a introducir:\n";
+					cin >> op;
+					push(op);
+					break;
+				}
+			case 2:
+				{
+					pop();
+					break;
+				}
+			case 3:
+				{
+					show();
+					break;
+				}
+			case 0:
+				{
+					f = true;
+					break;
+				}
+		
+		}
+	}
+	while(!f);
+}
+

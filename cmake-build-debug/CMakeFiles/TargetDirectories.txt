@@ -1,0 +1,2 @@
+C:/Users/User/Documents/Estructura de Datos/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/User/Documents/Estructura de Datos/cmake-build-debug/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,2 @@
+C:/Users/User/Documents/JetBrains/CLion Projects/Estructura de Datos/Unidad 2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/User/Documents/JetBrains/CLion Projects/Estructura de Datos/Unidad 2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
