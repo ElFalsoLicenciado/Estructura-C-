@@ -21,7 +21,7 @@ int main()
 
 
 	//Bicolas
-	cout << "\nBicolas:";
+	cout << "\nBicolas";
 	deque<int> q;
 	
 	q.push_front(10); q.push_front(20);
@@ -29,7 +29,7 @@ int main()
 
 	for(int a : q) //for each 
 	{
-		cout <<" "<< a;
+		cout << a << endl;
 	}
 	return 0;
 }
