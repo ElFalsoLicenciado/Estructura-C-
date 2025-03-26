@@ -31,5 +31,13 @@ int main()
 	{
 		cout <<" "<< a;
 	}
+
+	q.pop_front(); q.pop_back();
+	cout << endl;	
+	for(int a : q) //for each 
+	{
+		cout <<" "<< a;
+	}
+
 	return 0;
 }
