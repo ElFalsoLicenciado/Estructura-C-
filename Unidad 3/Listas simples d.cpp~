@@ -34,7 +34,7 @@ void inicializar()
 
 bool empty()
 {
-	return cabeza=nullptr;
+	return cabeza==nullptr;
 }
 
 void insertarFinal(int dato)
@@ -54,7 +54,7 @@ void insertarPosicion(int dato, int posicion)
 {
 	Nodo *nuevo = new Nodo(dato);
 
-	if(posicion == 0)
+	if(posicion == 1)
 	{
 		nuevo->sig = cabeza;
 		cabeza = nuevo;
@@ -63,17 +63,179 @@ void insertarPosicion(int dato, int posicion)
 
 	Nodo *aux = cabeza;
 
-	int contador = 0;
+	int contador = 1;
 
-	while(aux!=nullptr && contador < posicion)
+	while(aux!=nullptr && contador < posicion-1) //Quiero que se ponga antes del nodo.
 	{
-		aux = aux->ig;
+		aux = aux->sig;
 		++contador;
+	}
+
+	if(aux==nullptr) 
+	{
+		cout << "\nFuera de rango" << endl;
+		return;
+	}
+	nuevo->sig = aux->sig;
+	aux->sig = nuevo;
+	cout << "\nSe inserto un valor: " << dato << endl;
+}
+
+void eliminarPosicion(int posicion)
+{
+	if(empty())
+	{
+		cout << "\nTu lista esta vacia.";
+		return;
+	}
+
+	Nodo *aux = cabeza;
+	
+	if(posicion==1)
+	{
+		cabeza = cabeza->sig;
+		delete aux;
+		return;
+	}
+
+	Nodo *ant = nullptr;
+	int contador = 1;
+
+	while(aux!=nullptr && contador<posicion) //Quiero que se elimine en la posicion que quiero.
+	{
+		ant = aux;
+		aux = aux->sig;
+		++contador;
+	}
+
+	if(aux==nullptr) 
+	{
+		cout <<"\nFuera de rango"; return;
+	}
+
+	ant->sig = aux->sig;
+	delete aux;
+}
+
+
+void mostrar()
+{	
+	if(empty()) 
+	{
+		cout << "\nTu lista esta vacia";
+		return;
+	}
+	
+	cout <<"\nItems de tu lista: ";
+	Nodo *aux = cabeza;
+	while(aux!=nullptr)
+	{
+		cout << aux->valor;
+		aux = aux->sig;
+		if(aux->sig!=nullptr) cout << ", ";
+	}
+	return;
+}
+
+void destruir()
+{
+	Nodo *aux = cabeza;
+	Nodo *sig;
+
+	while(aux != nullptr)
+	{
+		sig = aux -> sig;
+		delete aux;
+		aux = sig;
 	}
 }
 
 
-int main()
+void buscarValor(int valor)
 {
+	if(empty())
+	{
+		cout << "\nTu lista esta vacia" << endl;
+	}
+	Nodo *aux = cabeza;
+	int contador = 0;
+
+	while(aux!=nullptr)
+	{	
+		++contador;
+		if(aux->valor == valor)
+		{
+			cout <<"\nTu valor se encuentra en: " << contador << endl;
+			return;
+		}
+		aux = aux -> sig;
+	}
+	cout << "\nTu valor no existe";
+	return;
+}
+
+int main()
+{	
+	inicializar();
+	
+	bool flag = true;
+	int i;
+
+	do
+	{
+		cout << "\nListas simples\n1. Insertar 2. Insertar a criterio 3. Eliminar ultimo 4. Eliminar a criterio 5. Mostrar 6. Destruir 0. Salir\n >> ";
+
+		cin >> i;
+		switch(i)
+		{
+			case 1:
+				cout << "\nDame un numero: ";
+				cin >> i;
+				insertarFinal(i);
+				mostrar();
+				break;	
+			
+			case 2:
+				int pos;
+				cout << "\nDame un numero: ";
+				cin >> i;
+
+				cout << "\nLa posicion: ";
+				cin >> pos;
+
+				insertarPosicion(i,pos);
+				mostrar();
+				break;	
+
+			case 3:
+				//eliminarFinal();
+				mostrar();
+				break;
+
+			case 4:
+				cout << "\nPosicion a eliminar: ";
+				cin >> i;
+				eliminarPosicion(i);
+				mostrar();
+				break;
+
+			case 5:
+				mostrar();
+				break;
+
+			case 6:
+				destruir();
+				break;
+
+			case 0:
+				flag = false;
+				break;
+
+			default: break;
+		}
+	}while(flag);
+
+
+	destruir();
 	return 0;
 }
