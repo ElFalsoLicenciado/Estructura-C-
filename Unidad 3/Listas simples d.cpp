@@ -183,7 +183,7 @@ int main()
 
 	do
 	{
-		cout << "\nListas simples\n1. Insertar 2. Insertar a criterio 3. Eliminar ultimo 4. Eliminar a criterio 5. Mostrar 6. Destruir 0. Salir\n >> ";
+		cout << "\nListas simples\n1. Insertar 2. Insertar a criterio 3. Eliminar a criterio 4. Mostrar 5. Destruir 0. Salir\n >> ";
 
 		cin >> i;
 		switch(i)
@@ -208,22 +208,17 @@ int main()
 				break;	
 
 			case 3:
-				//eliminarFinal();
-				mostrar();
-				break;
-
-			case 4:
 				cout << "\nPosicion a eliminar: ";
 				cin >> i;
 				eliminarPosicion(i);
 				mostrar();
 				break;
 
-			case 5:
+			case 4:
 				mostrar();
 				break;
 
-			case 6:
+			case 5:
 				destruir();
 				break;
 
@@ -236,7 +231,5 @@ int main()
 		}
 	}while(flag);
 
-
-	destruir();
 	return 0;
 }
