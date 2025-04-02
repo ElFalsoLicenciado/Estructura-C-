@@ -1,0 +1,191 @@
+#include <iostream>
+
+using namespace std;
+
+//Simulación de una Fila de Espera en una Tidnea con Ciclo
+
+int n = 0;
+
+void inicializar();
+bool empty();
+string generador();
+void enqueue();
+void dequeue();
+void numeroCli();
+void primero();
+void destruir();
+void mostrar();
+
+struct Nodo
+{
+	string ID;
+	Nodo *sig;
+};
+
+Nodo *cab;
+Nodo *dne;
+
+void inicializar()
+{
+	cab = nullptr;
+	dne = nullptr;
+}
+
+bool empty()
+{
+	return (cab == nullptr && dne == nullptr);
+}
+
+string generador()
+{
+	++n;
+	string id = to_string(n);
+	
+	while(id.length() < 5)
+	{
+		id.insert(0,"0");	
+	}
+	return id;
+}
+
+void enqueue()
+{
+	Nodo *nuevo = new Nodo();
+	string ID = generador();
+	
+	nuevo -> ID = ID;
+	nuevo -> sig = nullptr;
+	
+	if(empty()) cab = nuevo;
+
+	else	dne -> sig = nuevo;
+
+	dne = nuevo;
+
+	cout << "\nSe ha formado a la cola el cliente con el ID: " << ID << endl;
+	
+	mostrar();
+}
+
+void dequeue()
+{
+	if(empty()) cout << "\nNo hay ningun cliente para atender." << endl;
+
+	else
+	{
+		Nodo *aux = cab;
+		cab = cab -> sig;
+		
+		cout << "\nSe atendio al cliente con ID: " << aux -> ID << endl;
+
+		if(cab == nullptr) dne = nullptr;
+			
+		delete aux;
+
+		mostrar();
+	}
+}
+
+void numeroCli()
+{
+	int tamano = 0;
+	if(empty()) cout << "\nNo hay clientes en la cola." << endl;
+	
+	else 
+	{
+		Nodo *aux = cab;
+
+		while(aux != nullptr)
+		{
+			aux = aux -> sig;
+			++tamano;
+		}
+
+		cout << "\nHay " << tamano << endl;
+	}	
+}
+
+void primero()
+{
+	if(empty()) cout << "\nNo hay ningun cliente en la cola." << endl;
+
+	cout << "\nTu primer cliente tiene el ID de: " << cab -> ID << endl;
+}
+
+void destruir()
+{
+	while(!empty())
+	{
+		Nodo *aux = cab;
+		cab = cab -> sig;
+		
+		if(cab == nullptr) dne = nullptr;
+			
+		delete aux;
+	}	
+}
+
+void mostrar()
+{
+	if (empty()) 
+	{
+		cout << "\nNo hay nadie." << endl;
+		return;
+	}
+
+	Nodo *aux = cab;
+	
+	cout << "\nClientes: ";
+	
+	while(aux != nullptr)
+	{
+		cout << aux -> ID;
+		if(aux -> sig != nullptr) cout << ", ";
+		aux = aux -> sig;
+	}
+}
+
+int main()
+{	
+	int op; bool f = false;
+	inicializar();
+
+	do
+	{
+		cout << "\n1. Anadir cliente\n2. Atender cliente\n3. Tamano\n4. Primer cliente\n0. Salir\n-->";
+		cin >> op;
+		switch(op)
+		{
+			case 1:
+				{
+					enqueue();
+					break;
+				}
+			case 2:
+				{
+					dequeue();
+					break;
+				}
+			case 3:
+				{
+					numeroCli();
+					break;
+				}
+			case 4:
+				{
+					primero();
+					break;
+				}
+			case 0:
+				{
+					destruir();
+					f = true;
+					break;
+				}
+			default: break;
+		
+		}
+	}
+	while(!f);
+	return 0;
+}
