@@ -37,11 +37,12 @@ void insertarFinal(int dato)
 		cabeza = nuevo;
 		cabeza -> sig = nuevo;
 		cabeza -> ant = nuevo;
+		return;
 	}
 	else
 	{
 		Nodo *aux = cabeza;
-		//Nodo *aux = cabeza -> ant (Para evitar el ciclo)	
+		
 		while(aux -> sig != cabeza)
 			aux = aux -> sig;
 
@@ -50,15 +51,6 @@ void insertarFinal(int dato)
 		nuevo -> ant = aux;
 		cabeza -> ant = nuevo;
 	}
-
-	cout << "\nSe inserto al final: " << dato << endl;
-	return;
-}
-
-
-void eliminarFinal()
-{
-	
 
 
 int main()
