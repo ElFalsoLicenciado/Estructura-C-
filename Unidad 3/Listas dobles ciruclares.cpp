@@ -100,7 +100,7 @@ int size()
 	}
 }
 
-void insertarPoscion(int dato, int posicion)
+void insertarPosicion(int dato, int posicion)
 {
 	if(posicion > size())
 	{
@@ -140,8 +140,96 @@ void insertarPoscion(int dato, int posicion)
 			cout << "\nSe inserto un nuevo dato: " << dato << endl;
 			return;			
 		}
+
+	}
 }
 
+void eliminarPosicion(int posicion)
+{
+	if(empty())
+	{
+		cout << "\nLa lista esta vacia" << endl;
+		return;
+	}
+	
+	if(posicion > size())
+	{
+		cout << "\nFuera de rango, eliminando el ultimo..." << endl;
+		eliminarFinal();
+		return;
+	}
+	if(posicion == 1)
+	{
+		if(cabeza -> sig == cabeza)
+		{
+			delete cabeza;
+			cabeza = nullptr;
+			cout << "\nSe elimino la cabeza" << endl;
+			return;
+		}
+		else
+		{
+			Nodo *aux = cabeza;
+			cabeza -> ant -> sig = cabeza;
+			cabeza = aux -> sig;
+			cabeza -> ant = aux -> ant;
+			delete aux;
+			cout << "\nSe elimino la cabeza" << endl;
+			return;
+		}
+	}
+	int contador = 1;
+	Nodo *aux = cabeza;
+
+	while(contador < posicion)
+	{
+		aux = aux -> sig;
+		++contador;
+	}
+	aux -> ant  -> sig = aux -> sig;
+	aux -> sig -> ant = aux -> ant;
+	delete aux;
+	cout << "\nSe elimino un dato de la lista" << endl;
+}
+
+void mostrar()
+{
+	if(empty()) cout << "\nLista vacia" << endl;
+
+	else
+	{
+		Nodo *aux = cabeza;
+		cout << "\nItems de tu lista" << endl;
+		
+		do
+		{
+			cout << aux -> valor;
+			aux = aux -> sig;
+			if(aux != cabeza) cout << ", ";
+		
+		}while(aux != cabeza);
+		cout << endl;
+	}
+}
+
+void destruir()
+{
+	if(empty()) cout << "\nLista vacia" << endl;
+	else
+	{
+		Nodo *aux = cabeza;
+		Nodo *siguiente = nullptr;
+
+		do
+		{
+			siguiente = aux -> sig;
+			delete aux;
+			aux = siguiente;
+		}while(aux != cabeza);
+		cout << "\nLista eliminada" << endl;
+	}
+	
+}
 int main()
 {
 	return 0;
