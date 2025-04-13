@@ -83,7 +83,7 @@ void insertarPosicion(int dato, int posicion)
 	if(posicion == 1)
 	{
 		nuevo -> sig = cabeza;
-		if(cabeza != nullptr) cabeza -> ant = nuevo;
+		if(cabeza == nullptr) cabeza -> ant = nuevo;
 		cabeza = nuevo;
 
 		if(cabeza -> sig == nullptr) cola = cabeza;
