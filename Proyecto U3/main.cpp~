@@ -7,6 +7,15 @@ using json = nlohmann::json;
 using namespace std;
 
 const int LL = 60;
+const string encab(LL,'=');
+const string encab2(LL,'-');
+const string encab3(LL, '+'); 
+const string encab4(LL,'*');
+const string warn(LL,'!');
+const string ques(LL,'?');
+
+
+struct Tarea;
 
 void iniciar();
 bool vacia();
@@ -16,6 +25,8 @@ void mostrar();
 void agregar(string desc, int pr);
 void eliminar(string desc);
 void eliminar(int pr);
+
+void eliminacion(Tarea *del);
 
 void guardar();
 void cargar();
@@ -77,18 +88,19 @@ void vaciar()
 
 void mostrar()
 {
-	string encab(LL, '=');
-	cout << encab << endl;
+	cout << "\n" << encab << endl;
 	if(vacia())
 	{
+		cout << warn << endl;
 		bonito("No hay tareas registradas en tu agenda.");
+		cout << warn << endl;
 	}
 	else		
 	{
 		Tarea *aux = primera;
 		bonito("Tareas en tu agenda");
-		string linea(LL,'-');
-		cout << linea<<endl;	
+		
+		cout << encab3 <<endl;	
 		while(aux != nullptr)
 		{
 			string desc = "Descripcion: "; desc.append(aux -> desc);
@@ -97,7 +109,7 @@ void mostrar()
 			string pri ="Prioridad: "; pri.append(to_string(aux -> pri));
 			bonito(pri);
 
-			if(aux -> sig != nullptr) cout << linea << endl;
+			if(aux -> sig != nullptr) cout << encab3 << endl;
 			aux = aux -> sig;
 		}
 	}
@@ -123,6 +135,7 @@ void agregar(string desc, int pr)
 			ultima -> sig = nueva;
 			nueva -> ant = ultima;
 			ultima = nueva;
+			mostrar();
 			return;
 		}
 
@@ -153,47 +166,91 @@ void agregar(string desc, int pr)
 
 void eliminar(string desc)
 {
+	if(vacia())
+	{
+		cout << warn << endl;
+		bonito("No hay tareas registradas en tu agenda.");
+		cout << warn << endl;
+		return;
+	}
+
 	Tarea *aux = primera;
 
 	while(aux != nullptr && aux -> desc != desc) aux = aux -> sig;
 
 	if(aux == nullptr)
 	{
-		string notFound = "\nNo existe la tarea con descripcion: "; 
+		cout << warn << endl;
+		string notFound = "No existe la tarea con descripcion: "; 
 		notFound.append(desc);
 		bonito(notFound);
+		cout << warn << endl;
 	}
-	else
+	else 
 	{
-		//Primera
-		
-		//Medio
-		
-		//Ultima
+		eliminacion(aux);
+		mostrar();
 	}
 }
 
 void eliminar(int pr)
 {
+	if(vacia())
+	{
+		cout << warn << endl;
+		bonito("No hay tareas registradas en tu agenda.");
+		cout << warn << endl;
+		return;
+	}
 	Tarea *aux = primera;
 
 	while(aux != nullptr && aux -> pri != pr) aux = aux -> sig;
 
 	if (aux == nullptr)
 	{
-		string notFound = "\nNo existe ninguna tarea con prioridad: ";
+		cout << warn << endl;
+		string notFound = "No existe ninguna tarea con prioridad: ";
 		notFound.append(to_string(pr));
 		bonito(notFound);
+		cout << warn << endl;
 	}
-	else
+	else 
 	{
-		//Primera
-		
-		//Medio
-		
-		//Ultima
+		eliminacion(aux);
+		mostrar();
 	}
 }
+
+void eliminacion(Tarea *del)
+{
+	cout << "\n" << encab4 << endl;
+	bonito("Se elimino una tarea");
+	cout << encab2 << endl;
+	string elimDesc = "Descripcion: "; elimDesc.append(del -> desc);
+	bonito(elimDesc);
+	string elimPri = "Prioridad: ";elimPri.append(to_string(del -> pri));
+	bonito(elimPri);
+	//Primera y Ultima
+	
+	if(del == primera)
+	{
+		primera = del -> sig;
+		if(primera != nullptr) primera -> ant = nullptr;
+		
+		else ultima = nullptr;
+
+		delete del;
+		
+		cout << encab4 << endl;	
+		return;
+	}
+	
+	if(del -> ant != nullptr) del -> ant -> sig = del -> sig;
+	if(del -> sig != nullptr) del -> sig -> ant = del -> ant;
+	delete del;
+	cout << encab4 << endl;
+}
+
 
 void guardar()
 {
@@ -212,9 +269,10 @@ void bonito(string s )
 
 int main()
 {
-	iniciar();
-	agregar("Tulan",5);
-	agregar("Cande",9);
+	
+	/*agregar("Tulan",5);
+	agregar("Tulan",6);
+	agregar("Cande",7);
 	agregar("Memo",5);
 	agregar("Sergio",5);
 	agregar("Arturo",6);
@@ -222,13 +280,17 @@ int main()
 	agregar("Naty",10);
 	agregar("Alejandro",6);
 	agregar("Cristofer",3);
+	
+	eliminar(7);
+	eliminar(6);
+	eliminar(5);
 
 
-	mostrar();
 	vaciar();
-	/*
+	*/
+
 	int op; bool f = false;
-	iniciar();
+	iniciar(); cargar();
 
 	do
 	{
@@ -238,30 +300,76 @@ int main()
 		{
 			case 1:
 				{
-					cout << "\nDame un numero a introducir:\n";
+					string desc;
+					
+					cout << ques << endl;
+					bonito("Dame la descripcion: ");
+					cin >> desc;
+
+					cout << encab2 << endl;
+					bonito("Y la prioridad: ");
 					cin >> op;
-					push(op);
+					cout << ques << endl;
+
+					agregar(desc,op);
 					break;
 				}
 			case 2:
 				{
-					pop();
+					cout << ques << endl;
+					bonito("1. Descripcion 2. Prioridad 0. Salir");
+					cout << ">>" << endl;
+					cin >> op;
+					cout << ques << endl;
+
+					if(op == 0) break;
+					
+					if(op == 1)
+					{
+						string desc;
+						cout << ques << endl;
+						bonito("Dame la descripcion: ");
+						cin >> desc;
+						cout << ques << endl;
+
+						eliminar(desc);
+						break;
+					}
+					cout << ques << endl;
+					bonito("Dame la prioridad: ");
+					cin >> op;
+					cout << ques << endl;
+
+					eliminar(op);
 					break;
+
 				}
 			case 3:
 				{
-					show();
+					mostrar();
 					break;
 				}
 			case 0:
 				{
 					f = true;
+					cout << ques << endl;
+					bonito("Deseas guardar tu agenda");
+					cout << endl;
+					bonito("1. Si 0. No");
+					cout << ques << endl;
+
+					cin >> op;
+
+					if(op == 1) guardar();
+					vaciar();
 					break;
 				}
-		
+			default :
+				{
+					break;
+				}
 		}
 	}
 	while(!f);
-	*/
 	return 0;
 }
