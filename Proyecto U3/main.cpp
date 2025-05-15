@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 
 using json = nlohmann::json;
 using namespace std;
@@ -29,9 +29,9 @@ void eliminar(int pr);
 void eliminacion(Tarea *del);
 
 void guardar();
-void cargar();
+bool cargar();
 
-void bonito(string s);
+void centrar(string s);
 
 int main();
 
@@ -56,12 +56,9 @@ Tarea *ultima;
 
 void iniciar()
 {
-	/*Agregar condicion que si existe un archivo JSON:
-	* Si existe directamente deserializar el contenido.
-	* Si no, crear este archivo y iniciar los nodos en nulo.
-	*/
 	primera = nullptr;
 	ultima = nullptr;
+	cargar();
 }
 
 bool vacia()
@@ -82,7 +79,7 @@ void vaciar()
 			delete aux;
 			aux = sig;
 		}
-	cout << "\nAgenda vaciada." << endl;
+		primera = ultima = nullptr;
 	}
 }
 
@@ -92,28 +89,28 @@ void mostrar()
 	if(vacia())
 	{
 		cout << warn << endl;
-		bonito("No hay tareas registradas en tu agenda.");
-		cout << warn << endl;
+		centrar("No hay tareas registradas en tu agenda.");
+		cout << warn << "\n" <<endl;
 	}
 	else		
 	{
 		Tarea *aux = primera;
-		bonito("Tareas en tu agenda");
+		centrar("Tareas en tu agenda");
 		
 		cout << encab3 <<endl;	
 		while(aux != nullptr)
 		{
 			string desc = "Descripcion: "; desc.append(aux -> desc);
-			bonito(desc);
+			centrar(desc);
 
 			string pri ="Prioridad: "; pri.append(to_string(aux -> pri));
-			bonito(pri);
+			centrar(pri);
 
 			if(aux -> sig != nullptr) cout << encab3 << endl;
 			aux = aux -> sig;
 		}
 	}
-	cout << encab << endl;
+	cout << encab << "\n" << endl;
 }
 
 void agregar(string desc, int pr)
@@ -135,7 +132,6 @@ void agregar(string desc, int pr)
 			ultima -> sig = nueva;
 			nueva -> ant = ultima;
 			ultima = nueva;
-			mostrar();
 			return;
 		}
 
@@ -161,7 +157,6 @@ void agregar(string desc, int pr)
 		}
 		
 	}
-	mostrar();
 }
 
 void eliminar(string desc)
@@ -169,8 +164,8 @@ void eliminar(string desc)
 	if(vacia())
 	{
 		cout << warn << endl;
-		bonito("No hay tareas registradas en tu agenda.");
-		cout << warn << endl;
+		centrar("No hay tareas registradas en tu agenda.");
+		cout << warn << "\n" << endl;
 		return;
 	}
 
@@ -183,8 +178,8 @@ void eliminar(string desc)
 		cout << warn << endl;
 		string notFound = "No existe la tarea con descripcion: "; 
 		notFound.append(desc);
-		bonito(notFound);
-		cout << warn << endl;
+		centrar(notFound);
+		cout << warn << "\n" << endl;
 	}
 	else 
 	{
@@ -198,8 +193,8 @@ void eliminar(int pr)
 	if(vacia())
 	{
 		cout << warn << endl;
-		bonito("No hay tareas registradas en tu agenda.");
-		cout << warn << endl;
+		centrar("No hay tareas registradas en tu agenda.");
+		cout << warn << "\n" << endl;
 		return;
 	}
 	Tarea *aux = primera;
@@ -211,8 +206,8 @@ void eliminar(int pr)
 		cout << warn << endl;
 		string notFound = "No existe ninguna tarea con prioridad: ";
 		notFound.append(to_string(pr));
-		bonito(notFound);
-		cout << warn << endl;
+		centrar(notFound);
+		cout << warn << "\n" << endl;
 	}
 	else 
 	{
@@ -224,12 +219,12 @@ void eliminar(int pr)
 void eliminacion(Tarea *del)
 {
 	cout << "\n" << encab4 << endl;
-	bonito("Se elimino una tarea");
+	centrar("Se elimino una tarea");
 	cout << encab2 << endl;
 	string elimDesc = "Descripcion: "; elimDesc.append(del -> desc);
-	bonito(elimDesc);
+	centrar(elimDesc);
 	string elimPri = "Prioridad: ";elimPri.append(to_string(del -> pri));
-	bonito(elimPri);
+	centrar(elimPri);
 	//Primera y Ultima
 	
 	if(del == primera)
@@ -241,26 +236,90 @@ void eliminacion(Tarea *del)
 
 		delete del;
 		
-		cout << encab4 << endl;	
+		cout << encab4 << "\n" << endl;	
 		return;
 	}
 	
 	if(del -> ant != nullptr) del -> ant -> sig = del -> sig;
 	if(del -> sig != nullptr) del -> sig -> ant = del -> ant;
 	delete del;
-	cout << encab4 << endl;
+	cout << encab4 << "\n" << endl;
 }
 
 
 void guardar()
 {
+		ofstream archivo("C:/Users/User/Documents/JetBrains/CLion Projects/Estructura de Datos/Proyecto U3/tareas.json");
+
+	if(vacia())
+	{
+		archivo.close();
+		cout << warn << endl;
+		centrar("No hay nada que guardar");
+		cout << warn << "\n" << endl;
+		return;
+	}
+
+	json jTareas = json::array();
+	Tarea *aux = primera;
+
+	while(aux != nullptr)
+	{
+		json tareaJson = {
+			{"pri", aux -> pri},
+			{"desc", aux -> desc},
+		};
+		jTareas.push_back(tareaJson);
+		aux = aux -> sig;
+	}
+	
+	archivo << jTareas.dump(4);
+	archivo.close();
+
+	cout << encab3 << endl;
+	centrar("Archivo guardado correctamente.");
+	cout << encab3 << "\n" << endl;
+
+
 }
 
-void cargar()
+bool cargar()
 {
+	ifstream archivo;
+	archivo.open("C:/Users/User/Documents/JetBrains/CLion Projects/Estructura de Datos/Proyecto U3/tareas.json");
+
+	if(!archivo.is_open())
+	{
+		cout << warn << endl;
+		centrar("No hay una agenda previa.");
+		centrar("Creando una nueva...");
+		cout << warn << "\n" << endl;
+		return false;
+	}
+
+	else
+	{
+		json jTareas;
+		archivo >> jTareas;
+		archivo.close();
+
+		for(const auto& tareas : jTareas)
+		{
+			int pri = tareas["pri"].get<int>();
+			string desc= tareas["desc"].get<string>();
+
+			agregar(desc,pri);
+		}
+		cout << encab3 << endl;
+		centrar("Agenda cargada correctamente.");
+		cout << encab3 << "\n" << endl;
+
+		return true;
+	}
+
 }
 
-void bonito(string s )
+void centrar(string s )
 {
    int espacios = ( LL - s.size() ) / 2;
    if ( espacios > 0 ) cout << string( espacios, ' ' );
@@ -269,33 +328,40 @@ void bonito(string s )
 
 int main()
 {
+	/*
+	json Ordenes = json::array();
+	int xd = 2;
+	json orden =
+		{
+			{"comida", "Sushi"},
+			{"orden", 2},
+			{"pointer", nullptr},
+			{"empleado", "Pedro"}
+		};
+	Ordenes.push_back(orden);
+
+	ofstream file("C:/Users/User/Documents/JetBrains/CLion Projects/Estructura de Datos/Proyecto U3/foods.json");
+	file << Ordenes.dump(4);
+	file.close();
+	*/	
 	
-	/*agregar("Tulan",5);
-	agregar("Tulan",6);
-	agregar("Cande",7);
-	agregar("Memo",5);
-	agregar("Sergio",5);
-	agregar("Arturo",6);
-	agregar("Brandon",2);
-	agregar("Naty",10);
-	agregar("Alejandro",6);
-	agregar("Cristofer",3);
-	
-	eliminar(7);
-	eliminar(6);
-	eliminar(5);
-
-
-	vaciar();
-	*/
-
+		
 	int op; bool f = false;
-	iniciar(); cargar();
+	iniciar();
 
 	do
-	{
-		cout << "\n1. Agregar\n2. Eliminar\n3. Mostrar\n0. Salir\n-->";
+	{	
+		cout << encab4 << endl;
+		centrar("Bienvenido a tu administrador de tareas.");
+		cout << encab << endl;
+
+		cout << ques << endl;
+		centrar("Que quieres hacer?");
+		centrar("1. Agregar"); centrar("2. Eliminar"); centrar("3. Mostrar");
+		centrar("4. Vaciar"); centrar("0. Salir");
+		centrar("--> ");
 		cin >> op;
+		cout << ques << "\n" <<endl;
 		switch(op)
 		{
 			case 1:
@@ -303,21 +369,22 @@ int main()
 					string desc;
 					
 					cout << ques << endl;
-					bonito("Dame la descripcion: ");
+					centrar("Dame la descripcion: ");
 					cin >> desc;
 
 					cout << encab2 << endl;
-					bonito("Y la prioridad: ");
+					centrar("Y la prioridad: ");
 					cin >> op;
 					cout << ques << endl;
 
 					agregar(desc,op);
+					mostrar();
 					break;
 				}
 			case 2:
 				{
 					cout << ques << endl;
-					bonito("1. Descripcion 2. Prioridad 0. Salir");
+					centrar("1. Descripcion 2. Prioridad 0. Salir");
 					cout << ">>";
 					cin >> op;
 					cout << ques << endl;
@@ -327,14 +394,14 @@ int main()
 					if(op == 1)
 					{
 						string desc;
-						bonito("Dame la descripcion: ");
+						centrar("Dame la descripcion: ");
 						cin >> desc;
 						cout << ques << endl;
 
 						eliminar(desc);
 						break;
 					}
-					bonito("Dame la prioridad: ");
+					centrar("Dame la prioridad: ");
 					cin >> op;
 					cout << ques << endl;
 
@@ -347,18 +414,27 @@ int main()
 					mostrar();
 					break;
 				}
+			case 4:
+				{
+					vaciar();
+					cout << encab2 << endl;
+					centrar("Agenda vaciada.");
+					cout << encab2 << "\n" << endl;
+					break;
+				}
 			case 0:
 				{
 					f = true;
 					cout << ques << endl;
-					bonito("Deseas guardar tu agenda");
+					centrar("Deseas guardar cambios?");
 					cout << endl;
-					bonito("1. Si 0. No");
+					centrar("1. Si 0. No");
 					cout << ques << endl;
 
 					cin >> op;
 
 					if(op == 1) guardar();
+
 					vaciar();
 					break;
 				}
@@ -369,5 +445,6 @@ int main()
 		}
 	}
 	while(!f);
+	
 	return 0;
 }
